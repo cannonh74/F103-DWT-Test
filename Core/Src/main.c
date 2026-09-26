@@ -42,16 +42,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int DWT_CYCCNT_Overflow = 0;
-int lastNow = 0;
-float t = 0;
+float debug_t = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-float getLastResetTime(void);
+double getLastResetTime(void);
 void DWT_Init(void);
 /* USER CODE END PFP */
 
@@ -98,7 +96,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    t = getLastResetTime();
+    debug_t = getLastResetTime();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -169,25 +167,40 @@ void DWT_Init(void){
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 }
 
-volatile float getLastResetTime(void) {
+ double getLastResetTime(void) {
   
-  unsigned int now_cycles = DWT->CYCCNT;
+  static unsigned int lastCYCCNT = 0;
+  static unsigned long totalCYCCNT = 0;
 
-  if(now_cycles < lastNow) {
-    DWT_CYCCNT_Overflow++;
-  }
+  unsigned int currentCYCCNT = DWT -> CYCCNT;
+  totalCYCCNT += (unsigned int)(currentCYCCNT - lastCYCCNT);
+  lastCYCCNT = currentCYCCNT; 
+
+  double totalTime = (double)(totalCYCCNT) / (double)(CLK_SPEED);
+
+  return totalTime;
+
+
+
+
+
+  // unsigned int now_cycles = DWT->CYCCNT;
+
+  // if(now_cycles < lastNow) {
+  //   DWT_CYCCNT_Overflow++;
+  // }
   
-  lastNow = now_cycles; 
+  // lastNow = now_cycles; 
 
-  static float ONECYCLETIME = 268.435456f;
+  // static float ONECYCLETIME = 268.435456f;
 
-  float overflowTime = DWT_CYCCNT_Overflow * ONECYCLETIME;
+  // float overflowTime = DWT_CYCCNT_Overflow * ONECYCLETIME;
 
-  float lastTimeElapsed = (float)now_cycles / (float)CLK_SPEED;
+  // float lastTimeElapsed = (float)now_cycles / (float)CLK_SPEED;
 
-  float totalTimeElapsed = lastTimeElapsed + overflowTime;
+  // float totalTimeElapsed = lastTimeElapsed + overflowTime;
 
-  return totalTimeElapsed;
+  // return totalTimeElapsed;
   
 }
 /* USER CODE END 4 */
