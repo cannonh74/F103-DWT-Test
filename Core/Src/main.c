@@ -31,7 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define CLK_SPEED 16000000UL
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -176,31 +176,9 @@ void DWT_Init(void){
   totalCYCCNT += (unsigned int)(currentCYCCNT - lastCYCCNT);
   lastCYCCNT = currentCYCCNT; 
 
-  double totalTime = (double)(totalCYCCNT) / (double)(CLK_SPEED);
+  double totalTime = (double)(totalCYCCNT) / (double)(HAL_RCC_GetSysClockFreq());
 
   return totalTime;
-
-
-
-
-
-  // unsigned int now_cycles = DWT->CYCCNT;
-
-  // if(now_cycles < lastNow) {
-  //   DWT_CYCCNT_Overflow++;
-  // }
-  
-  // lastNow = now_cycles; 
-
-  // static float ONECYCLETIME = 268.435456f;
-
-  // float overflowTime = DWT_CYCCNT_Overflow * ONECYCLETIME;
-
-  // float lastTimeElapsed = (float)now_cycles / (float)CLK_SPEED;
-
-  // float totalTimeElapsed = lastTimeElapsed + overflowTime;
-
-  // return totalTimeElapsed;
   
 }
 /* USER CODE END 4 */
