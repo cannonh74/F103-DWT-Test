@@ -4,18 +4,18 @@
         {
             "name": "Debug STM32 (OpenOCD)",
             "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/firmware.elf", // Path to your compiled .elf
+            "executable": "${workspaceFolder}/build/DWT_test.elf", 
             "request": "launch",
             "type": "cortex-debug",
             "runToEntryPoint": "main",
             "servertype": "openocd",
-            "device": "STM32F103C8T6", // Change to your specific chip part number
+            "device": "STM32F103C8T6",
             "configFiles": [
                 "interface/stlink.cfg",
-                "target/stm32f1x.cfg" // Change to match your chip series
+                "target/stm32f1x.cfg" 
             ],
-            "preLaunchTask": "build", // This maps to a task in tasks.json
-            "svdFile": "${workspaceFolder}/STM32F103.svd", // Optional: For peripheral register view
+            "preLaunchTask": "build", 
+            "svdFile": "${workspaceFolder}/STM32F103.svd", 
             "liveWatch": {
                 "enabled": true,
                 "samplesPerSecond": 4

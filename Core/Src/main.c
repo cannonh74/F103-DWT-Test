@@ -44,12 +44,14 @@
 /* USER CODE BEGIN PV */
 int DWT_CYCCNT_Overflow = 0;
 int lastNow = 0;
+float t = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-int getLastResetTime(void);
+float getLastResetTime(void);
 void DWT_Init(void);
 /* USER CODE END PFP */
 
@@ -66,7 +68,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  DWT_Init();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -86,6 +88,7 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -95,7 +98,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    t = getLastResetTime();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -139,6 +142,25 @@ void SystemClock_Config(void)
   }
 }
 
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
 /* USER CODE BEGIN 4 */
 
 void DWT_Init(void){
@@ -147,19 +169,21 @@ void DWT_Init(void){
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 }
 
-int getLastResetTime(void) {
-  int now_cycles = DWT->CYCCNT;
+volatile float getLastResetTime(void) {
+  
+  unsigned int now_cycles = DWT->CYCCNT;
 
   if(now_cycles < lastNow) {
     DWT_CYCCNT_Overflow++;
   }
   
   lastNow = now_cycles; 
-  float ONECYCLETIME = 268.435456;
 
-  int overflowTime = DWT_CYCCNT_Overflow * ONECYCLETIME;
+  static float ONECYCLETIME = 268.435456f;
 
-  float lastTimeElapsed = now_cycles / CLK_SPEED;
+  float overflowTime = DWT_CYCCNT_Overflow * ONECYCLETIME;
+
+  float lastTimeElapsed = (float)now_cycles / (float)CLK_SPEED;
 
   float totalTimeElapsed = lastTimeElapsed + overflowTime;
 

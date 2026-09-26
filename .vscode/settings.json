@@ -7,5 +7,6 @@
             "binaryPath": "/home/cannon/stm32/stm32-bare-metal/DWT_test/DWT_test/firmware.elf",
             "binaryArgs": []
         }
-    ]
+    ],
+    "cortex-debug.variableUseNaturalFormat": true
 }
